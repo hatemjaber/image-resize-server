@@ -3,7 +3,7 @@ import { app } from "./utils/server.js";
 import { HTTPException } from "hono/http-exception";
 import { ensureHealthCheckImage, performHealthCheck, s3 } from "./utils/helpers.js";
 import { handlers } from "./utils/exceptions.js";
-import { uploadFiles } from "./routes/upload.js";
+import { uploadImages } from "./routes/upload.js";
 import { getImageWithResize } from "./routes/image.js";
 import { testPage } from "./routes/test.js";
 
@@ -29,7 +29,7 @@ app.get("/health-check", async (c: Context) => {
 app.get("/test", testPage);
 
 // Upload endpoint for single or multiple files
-app.post("/image/*", uploadFiles);
+app.post("/image/*", uploadImages);
 
 // Get image endpoint with optional resizing
 app.get("/image/*", getImageWithResize);

@@ -23,14 +23,10 @@ import crypto from "crypto";
  * - 400: Invalid request or file validation error
  * - 500: Server error during upload
  */
-export async function uploadFiles(c: Context) {
+export async function uploadImages(c: Context) {
     try {
         // Get the prefix from the path parameter
         const prefix = c.req.path.replace("/image/", "").split("/")[0];
-
-        console.log("******************** BEFORE ********************");
-        console.log("prefix", prefix);
-        console.log("******************** BEFORE ********************");
 
         // Validate prefix
         if (!prefix) {
@@ -41,10 +37,6 @@ export async function uploadFiles(c: Context) {
         if (!/^[a-zA-Z0-9-_]+$/.test(prefix)) {
             throw new handlers.InvalidPrefixFormat(c);
         }
-
-        console.log("******************** AFTER ********************");
-        console.log("prefix", prefix);
-        console.log("******************** AFTER ********************");
 
         const formData = await c.req.formData();
 
