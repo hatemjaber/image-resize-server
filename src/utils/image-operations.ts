@@ -129,57 +129,11 @@ export async function getOrCreateResizedImage(
  */
 export async function extractImageMetadata(buffer: Buffer): Promise<Record<string, any>> {
     try {
-        const tags = await ExifReader.load(buffer);
-
+        const tags = ExifReader.load(buffer);
         // Convert tags to a more friendly format
         const metadata: Record<string, any> = {};
 
-        // Common metadata fields we want to extract
-        const commonFields = {
-            'DateTimeOriginal': 'dateTaken',
-            'DateTime': 'dateModified',
-            'Make': 'cameraMake',
-            'Model': 'cameraModel',
-            'ExposureTime': 'exposureTime',
-            'FNumber': 'fNumber',
-            'ISO': 'iso',
-            'FocalLength': 'focalLength',
-            'GPSLatitude': 'latitude',
-            'GPSLongitude': 'longitude',
-            'GPSAltitude': 'altitude',
-            'ImageWidth': 'width',
-            'ImageHeight': 'height',
-            'Orientation': 'orientation',
-            'Software': 'software',
-            'Copyright': 'copyright',
-            'Artist': 'artist',
-            'Description': 'description',
-            'Keywords': 'keywords'
-        };
-
-        // Extract common fields
-        for (const [tag, field] of Object.entries(commonFields)) {
-            if (tags[tag]) {
-                // Only include the description if available, otherwise use the value
-                // Skip if both are undefined or if they're raw data arrays
-                const value = tags[tag].description || tags[tag].value;
-                if (value && !Array.isArray(value) && typeof value !== 'object') {
-                    metadata[field] = value;
-                }
-            }
-        }
-
-        // Add GPS coordinates if available
-        if (tags['GPSLatitude'] && tags['GPSLongitude']) {
-            const lat = tags['GPSLatitude'].description;
-            const lon = tags['GPSLongitude'].description;
-            if (lat && lon && !Array.isArray(lat) && !Array.isArray(lon)) {
-                metadata.location = {
-                    latitude: lat,
-                    longitude: lon
-                };
-            }
-        }
+        metadata.exif = tags;
 
         // Add image dimensions from Sharp metadata
         const sharpMetadata = await sharp(buffer).metadata();

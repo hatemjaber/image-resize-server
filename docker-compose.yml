@@ -1,20 +1,41 @@
+version: "3.8"
+
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    image: image-resize-server
+    container_name: app
+    hostname: app
+    volumes:
+      - node_modules:/app/node_modules
+      - .:/app
+    working_dir: /app
+    ports:
+      - "0.0.0.0:5555:5555"
+    env_file:
+      - .env
+    depends_on:
+      - minio
   minio:
-    image: minio/minio:latest
+    image: minio/minio
     container_name: minio
     hostname: minio
-    volumes:
-        - "minio_data:/data"
-        - "minio_config:/root/.minio"
     ports:
-        - "0.0.0.0:9000:9000"
-        - "0.0.0.0:9001:9001"
+      - "9000:9000"
+      - "9001:9001"
     environment:
-        MINIO_ROOT_USER: ${BUCKET_ACCESS_KEY_ID}
-        MINIO_ROOT_PASSWORD: ${BUCKET_ACCESS_KEY}
-        MINIO_ADDRESS: ":9000"
-        MINIO_CONSOLE_ADDRESS: ":9001"
-    command: server /data
+      MINIO_ROOT_USER: ${BUCKET_ACCESS_KEY_ID}
+      MINIO_ROOT_PASSWORD: ${BUCKET_ACCESS_KEY}
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
   createbuckets:
     image: minio/mc
     container_name: createbuckets
@@ -40,7 +61,7 @@ services:
       fi;
       exit 0;
       "
-  
+
 volumes:
   minio_data:
-  minio_config:
+  node_modules:
