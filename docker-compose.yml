@@ -1,0 +1,46 @@
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    hostname: minio
+    volumes:
+        - "minio_data:/data"
+        - "minio_config:/root/.minio"
+    ports:
+        - "0.0.0.0:9000:9000"
+        - "0.0.0.0:9001:9001"
+    environment:
+        MINIO_ROOT_USER: ${BUCKET_ACCESS_KEY_ID}
+        MINIO_ROOT_PASSWORD: ${BUCKET_ACCESS_KEY}
+        MINIO_ADDRESS: ":9000"
+        MINIO_CONSOLE_ADDRESS: ":9001"
+    command: server /data
+  createbuckets:
+    image: minio/mc
+    container_name: createbuckets
+    restart: no
+    depends_on:
+      - minio
+    profiles: ["setup"]
+    environment:
+      - MINIO_ROOT_USER=${BUCKET_ACCESS_KEY_ID}
+      - MINIO_ROOT_PASSWORD=${BUCKET_ACCESS_KEY}
+    entrypoint: >
+      /bin/sh -c "
+      until /usr/bin/mc config host add myminio http://minio:9000 ${BUCKET_ACCESS_KEY_ID} ${BUCKET_ACCESS_KEY}; do
+        echo 'Waiting for MinIO to be ready...'
+        sleep 1
+      done;
+      if ! /usr/bin/mc ls myminio/${BUCKET_NAME} > /dev/null 2>&1; then
+        echo 'Bucket does not exist, creating it...'
+        /usr/bin/mc mb myminio/${BUCKET_NAME};
+        /usr/bin/mc anonymous set download myminio/${BUCKET_NAME};
+      else
+        echo 'Bucket already exists'
+      fi;
+      exit 0;
+      "
+  
+volumes:
+  minio_data:
+  minio_config:

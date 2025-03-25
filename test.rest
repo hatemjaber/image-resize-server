@@ -1,0 +1,15 @@
+@api = http://localhost:5555
+@key = 000-health-check-image-000
+
+### Health Check
+GET {{api}}/health-check
+
+### Get Image
+GET {{api}}/image/{{key}}
+
+### Get Image with Size
+GET {{api}}/image/{{key}}?size=200x200
+
+### Get Image with Size
+GET {{api}}/image/{{key}}?size=100x100
+
