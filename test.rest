@@ -1,15 +1,31 @@
 @api = http://localhost:5555
-@key = 000-health-check-image-000
+@s3_key = 000-health-check-image-000
+@api_key = key
+@api_secret = secret
+@subscriber = 20000000
+
+### Get Token
+# @name auth
+POST {{api}}/auth/token
+Authorization: Basic {{api_key}}:{{api_secret}}
+Content-Type: application/json
+
+{
+    "sub": "{{subscriber}}"
+}
+
+### Assign Token to Variable
+@token = {{auth.response.body.access_token}}
 
 ### Health Check
 GET {{api}}/health-check
-
+Authorization: Bearer {{token}}
 ### Get Image
-GET {{api}}/image/{{key}}
+GET {{api}}/image/{{s3_key}}
 
 ### Get Image with Size
-GET {{api}}/image/{{key}}?size=200x200
+GET {{api}}/image/{{s3_key}}?size=200x200
 
 ### Get Image with Size
-GET {{api}}/image/{{key}}?size=100x100
+GET {{api}}/image/{{s3_key}}?size=100x100
 

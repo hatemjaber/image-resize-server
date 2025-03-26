@@ -21,6 +21,21 @@ const envSchema = z.object({
     PORT: z.coerce.number().default(3000),
 
     /**
+     * The token for the X API
+     */
+    X_API_KEY: z.string(),
+
+    /**
+     * The secret for the X API
+     */
+    X_API_SECRET: z.string(),
+
+    /**
+     * The signing key for the X API
+     */
+    X_API_TOKEN_SIGN_KEY: z.string(),
+
+    /**
      * The region for the R2 bucket (e.g., "auto")
      */
     BUCKET_REGION: z.string(),

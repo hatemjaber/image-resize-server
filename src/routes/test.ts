@@ -3,7 +3,7 @@ import { type Context } from "hono";
 /**
  * Test page for image upload functionality.
  * Provides a form to test uploading images with different prefixes.
- */
+*/
 export function testPage(c: Context) {
     return c.html(`
         <!DOCTYPE html>
@@ -81,6 +81,7 @@ export function testPage(c: Context) {
                     const files = document.getElementById('files').files;
                     const result = document.getElementById('result');
                     const error = document.getElementById('error');
+                    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDAwMDAwMCIsImlzcyI6ImltYWdlLXJlc2l6ZS1zZXJ2ZXIiLCJleHAiOjE3NDI5OTcwNzgsImFsZyI6IkhTMjU2In0.vSPxWOHsDzFCIogVpHBWW19RSSskUnpP-t3CcMIdo80';
                     
                     error.textContent = '';
                     result.textContent = 'Uploading...';
@@ -88,12 +89,16 @@ export function testPage(c: Context) {
                     const formData = new FormData();
                     for (let i = 0; i < files.length; i++) {
                         formData.append('files', files[i]);
+                        formData.append('sub', '20000000')
                     }
 
                     try {
                         const response = await fetch(\`/image/\${prefix}\`, {
                             method: 'POST',
-                            body: formData
+                            body: formData,
+                            headers: {
+                                'Authorization': \`Bearer \${token}\`
+                            }
                         });
 
                         const data = await response.json();

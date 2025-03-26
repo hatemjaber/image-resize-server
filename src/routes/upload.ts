@@ -26,12 +26,7 @@ import crypto from "crypto";
 export async function uploadImages(c: Context) {
     try {
         // Get the prefix from the path parameter
-        const prefix = c.req.path.replace("/image/", "").split("/")[0];
-
-        // Validate prefix
-        if (!prefix) {
-            throw new handlers.PrefixRequired(c);
-        }
+        const prefix = c.get("decoded").sub;
 
         // Validate prefix format (alphanumeric, hyphens, and underscores only)
         if (!/^[a-zA-Z0-9-_]+$/.test(prefix)) {

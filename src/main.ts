@@ -1,11 +1,13 @@
 import { type Context } from "hono";
-import { app } from "./utils/server.js";
 import { HTTPException } from "hono/http-exception";
+import { app } from "./utils/server.js";
 import { ensureHealthCheckImage, performHealthCheck, s3 } from "./utils/helpers.js";
 import { handlers } from "./utils/exceptions.js";
 import { uploadImages } from "./routes/upload.js";
 import { getImageWithResize } from "./routes/image.js";
 import { testPage } from "./routes/test.js";
+import { jwtValidation } from "./utils/middleware.js";
+import { auth } from "./routes/auth.js";
 
 // Create health check image on server start
 try {
@@ -28,11 +30,13 @@ app.get("/health-check", async (c: Context) => {
 // Test page for image uploads
 app.get("/test", testPage);
 
-// Upload endpoint for single or multiple files
-app.post("/image/*", uploadImages);
-
 // Get image endpoint with optional resizing
 app.get("/image/*", getImageWithResize);
+
+app.post("/auth/token", auth);
+
+// Upload endpoint for single or multiple files
+app.post("/image/*", jwtValidation, uploadImages);
 
 // Block unsupported HTTP methods
 app.use("*", async (c, next) => {
