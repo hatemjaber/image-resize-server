@@ -36,7 +36,7 @@ app.get("/image/*", getImageWithResize);
 app.post("/auth/token", auth);
 
 // Upload endpoint for single or multiple files
-app.post("/image/*", jwtValidation, uploadImages);
+app.post("/image", jwtValidation, uploadImages);
 
 // Block unsupported HTTP methods
 app.use("*", async (c, next) => {
