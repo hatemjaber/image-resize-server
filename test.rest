@@ -1,5 +1,5 @@
 @api = http://localhost:5555
-@s3_key = TEeq8BmdOMryyiZPvX3mZejml55b9EzqBJXszhLxqU3F2pK4V0o3Yu8w9YSWaB9pE4mFY8i0u2pYvXyGHTx4RNQDS6Ko5fPvZd6FW%2FlEf7Fjis4a9ZG09IAmWqi3EMGxR1N6ErwUBeldxOzF35rVrAkamSHX2RnHx6rFS2HENkojlFQoRGpfmnDrXiSbIM9RS87dgNXKKCr%2FCZgmGf0zT66pZK7v
+@s3_key = CZf2R__BwHq5oTRDpBlv2au6yDU-GzQOCyHNyBbyqACyUW2Z0wkf3zVY4pQEr2V8odOE1QlJVmty6kQmmTTWhfqlGgWO-QMSdZkgWchWuIqIeU3bFZlVvGNfE29ev6GV1J8WmiJ6XzMac3JFp1Ht_6w
 @api_key = key
 @api_secret = secret
 @subscriber = 20000000
@@ -22,6 +22,12 @@ GET {{api}}/health-check
 Authorization: Bearer {{token}}
 ### Get Image
 GET {{api}}/image?key={{s3_key}}
+
+### Get Image with Size
+GET {{api}}/image?key={{s3_key}}&size=400x400
+
+### Get Image with Size
+GET {{api}}/image?key={{s3_key}}&size=300x300
 
 ### Get Image with Size
 GET {{api}}/image?key={{s3_key}}&size=200x200

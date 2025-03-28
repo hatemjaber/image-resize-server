@@ -5,7 +5,6 @@ import { ensureHealthCheckImage, performHealthCheck, s3 } from "./utils/helpers.
 import { handlers } from "./utils/exceptions.js";
 import { uploadImages } from "./routes/upload.js";
 import { getImageWithResize } from "./routes/image.js";
-import { testPage } from "./routes/test.js";
 import { jwtValidation } from "./utils/middleware.js";
 import { auth } from "./routes/auth.js";
 
@@ -27,13 +26,11 @@ app.get("/health-check", async (c: Context) => {
     return c.json(result, result.status === "error" ? 500 : 200);
 });
 
-// Test page for image uploads
-app.get("/test", testPage);
+// Auth endpoint for API key authentication
+app.post("/auth/token", auth);
 
 // Get image endpoint with optional resizing
-app.get("/image/*", getImageWithResize);
-
-app.post("/auth/token", auth);
+app.get("/image", getImageWithResize);
 
 // Upload endpoint for single or multiple files
 app.post("/image", jwtValidation, uploadImages);

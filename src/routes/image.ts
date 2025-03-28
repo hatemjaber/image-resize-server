@@ -3,6 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { handlers } from "../utils/exceptions.js";
 import { getImage, getOrCreateResizedImage } from "../utils/image-operations.js";
 import { validateSizeParameter } from "../utils/helpers.js";
+import { encryptionService } from "../utils/encryption.js";
 
 /**
  * Get an image from storage with optional resizing.
@@ -20,23 +21,18 @@ import { validateSizeParameter } from "../utils/helpers.js";
  * - 500: Server error during processing
  */
 export async function getImageWithResize(c: Context) {
-    const path = c.req.path;
-    const prefix = path.match(/^\/image\/([^\/]+)/)?.[1];
-
-    if (!prefix) {
-        throw new handlers.PrefixRequired(c);
-    }
-
-    if (!/^[a-zA-Z0-9-_]+$/.test(prefix)) {
-        throw new handlers.InvalidPrefixFormat(c);
-    }
-
-    const key = path.replace("/image/", "");
+    const key = c.req.query("key");
     const size = c.req.query("size");
 
+    if (!key) {
+        throw new handlers.KeyRequired(c);
+    }
+
+    // always get the original image
+    const s3_key = encryptionService.decrypt(key.trim());
+    const originalImage = await getImage(s3_key);
+
     try {
-        // always get the original image
-        const originalImage = await getImage(key);
 
         // If no size parameter, return original image
         if (!size) {
@@ -47,7 +43,7 @@ export async function getImageWithResize(c: Context) {
 
         // Validate and process size parameter
         validateSizeParameter(size.toLowerCase());
-        const resizedImage = await getOrCreateResizedImage(originalImage, key, size.toLowerCase());
+        const resizedImage = await getOrCreateResizedImage(originalImage, s3_key, size.toLowerCase());
 
         return c.body(resizedImage.buffer, 200, {
             "Content-Type": resizedImage.contentType

@@ -41,6 +41,16 @@ export const handlers = {
         errorCode: 'INVALID_KEY',
     },
 
+    /** 
+     * Exception thrown when a key is required for storage operations.
+     */
+    KeyRequired: {
+        code: StatusCodes.BAD_REQUEST,
+        message: 'Key is required',
+        cause: 'Key is required',
+        errorCode: 'KEY_REQUIRED',
+    },
+
     /**
      * Exception thrown when no image is provided in the request.
      */

@@ -5,6 +5,7 @@ import { s3, cleanupResizedVariants } from "../utils/helpers.js";
 import { env } from "../utils/env.js";
 import { handlers } from "../utils/exceptions.js";
 import crypto from "crypto";
+import { encryptionService } from "../utils/encryption.js";
 
 /**
  * Upload one or more images to the storage service.
@@ -65,19 +66,21 @@ export async function uploadImages(c: Context) {
                 // Generate a unique key using UUID v4 with the prefix
                 const timestamp = Date.now();
                 const uuid = crypto.randomUUID();
-                const key = `${ prefix }/${ timestamp }-${ uuid }`;
+                const s3_key = `${ prefix }/${ timestamp }-${ uuid }`;
+                const key = encryptionService.encrypt(s3_key);
 
                 // Clean up any existing resized variants if the key already exists
-                await cleanupResizedVariants(s3, key);
+                await cleanupResizedVariants(s3, s3_key);
 
                 // Upload the file
-                await s3.putObject(env.BUCKET_NAME, key, buffer, file.type);
+                await s3.putObject(env.BUCKET_NAME, s3_key, buffer, file.type);
 
                 // Extract metadata from the image
                 const metadata = await extractImageMetadata(buffer);
 
                 return {
                     key,
+                    s3_key,
                     originalName: file.name,
                     contentType: file.type,
                     size: file.size,
