@@ -64,6 +64,11 @@ const envSchema = z.object({
      * The key for the health check image in the bucket
      */
     HEALTH_CHECK_IMAGE_KEY: z.string(),
+
+    /**
+     * The key used for encrypting/decrypting image keys
+     */
+    IMAGE_KEY_ENCRYPTION_KEY: z.string(),
 });
 
 /**
