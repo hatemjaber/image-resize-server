@@ -1,5 +1,5 @@
 @api = http://localhost:5555
-@s3_key = 000-health-check-image-000
+@s3_key = TEeq8BmdOMryyiZPvX3mZejml55b9EzqBJXszhLxqU3F2pK4V0o3Yu8w9YSWaB9pE4mFY8i0u2pYvXyGHTx4RNQDS6Ko5fPvZd6FW%2FlEf7Fjis4a9ZG09IAmWqi3EMGxR1N6ErwUBeldxOzF35rVrAkamSHX2RnHx6rFS2HENkojlFQoRGpfmnDrXiSbIM9RS87dgNXKKCr%2FCZgmGf0zT66pZK7v
 @api_key = key
 @api_secret = secret
 @subscriber = 20000000
@@ -21,11 +21,11 @@ Content-Type: application/json
 GET {{api}}/health-check
 Authorization: Bearer {{token}}
 ### Get Image
-GET {{api}}/image/{{s3_key}}
+GET {{api}}/image?key={{s3_key}}
 
 ### Get Image with Size
-GET {{api}}/image/{{s3_key}}?size=200x200
+GET {{api}}/image?key={{s3_key}}&size=200x200
 
 ### Get Image with Size
-GET {{api}}/image/{{s3_key}}?size=100x100
+GET {{api}}/image?key={{s3_key}}&size=100x100
 
