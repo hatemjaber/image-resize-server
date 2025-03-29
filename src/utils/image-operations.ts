@@ -108,14 +108,15 @@ export async function getOrCreateResizedImage(
         };
 
         // Process the image with error handling
-        const resizedBuffer = await sharp(originalImage.buffer, {
+        const webp = sharp(originalImage.buffer, {
             failOnError: false  // Don't fail on corrupt images
-        })
-            .resize(resizeOptions)
-            .toBuffer();
+        }).resize(resizeOptions).toFormat('webp', { quality: 80 });
 
-        await s3.putObject(env.BUCKET_NAME, resizedKey, resizedBuffer, originalImage.contentType);
-        return { buffer: resizedBuffer, contentType: originalImage.contentType };
+
+        const resizedBuffer = await webp.toBuffer();
+
+        await s3.putObject(env.BUCKET_NAME, resizedKey, resizedBuffer, 'image/webp');
+        return { buffer: resizedBuffer, contentType: 'image/webp' };
     }
 }
 
