@@ -2,6 +2,8 @@
 
 ## Docker Buildx: Multi-Architecture Build Guide
 
+*Depending on your system setup, the command could be `docker-buildx` or `docker buildx`*
+
 ### 🔧 Command 1: Create a Buildx Builder
 
 This guide demonstrates how to set up Docker Buildx for building multi-platform images and pushing them to a container registry.
@@ -54,3 +56,17 @@ docker buildx build --platform linux/amd64,linux/arm64 -t hatemjaber/image-resiz
 
 📝 Summary
 This command builds a Docker image for both amd64 and arm64 architectures using the active multi-arch builder. It tags the image as hatemjaber/image-resize-server:1.0.0, then pushes the multi-platform manifest and image layers to the registry.
+
+### Command 3:  Shut Down and Remove
+
+```bash
+docker buildx rm multi-arch
+```
+
+### What this does:
+- `rm`: Removes the builder instance named multi-arch.
+
+- This will also remove the container used for building (if using the `docker-container` driver), freeing up resources.
+
+📝 If you're done using Buildx entirely, this is a clean way to shut down your build environment.
+
